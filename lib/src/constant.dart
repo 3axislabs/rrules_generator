@@ -1,9 +1,6 @@
 List<String> repeatOn = [
-  CString.yearly,
-  CString.monthly,
   CString.weekly,
   CString.daily,
-  CString.hourly,
 ];
 
 List<String> months = [
@@ -53,8 +50,6 @@ List<String> weekDayShort = [
 ];
 
 List<String> endDropdownList = [
-  CString.never,
-  CString.after,
   CString.onDate,
 ];
 
@@ -62,13 +57,10 @@ enum RecurrenceMeta { on, onThe, onDay }
 
 class CString {
   static const String start = "Start";
-  static const String repeat = "Repeat";
+  static const String Frequency = "Frequency";
   static const String end = "end";
-  static const String yearly = "Yearly";
-  static const String monthly = "Monthly";
   static const String weekly = "Weekly";
   static const String daily = "Daily";
-  static const String hourly = "Hourly";
   static const String repeatOn = "Repeat On";
   static const String onThe = "Repeat On the";
   static const String onday = "Repeat On day";

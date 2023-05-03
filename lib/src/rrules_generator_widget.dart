@@ -59,11 +59,11 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
   DateTime endDate = DateTime.now();
 
   // String variables
-  String selectedFrequency = CString.yearly;
+  String selectedFrequency = CString.daily;
   String selectedWeekDay = CString.monday;
   String selectedOrdinal = CString.first;
   String selectedMonth = CString.jan;
-  String selectedEnd = CString.never;
+  String selectedEnd = CString.onDate;
   String selectedDay = "1";
   String finalRRule = "";
   String? everyText = "1";
@@ -94,14 +94,8 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       if (rrule.frequency != null) {
         if (rrule.frequency.toString() == "DAILY") {
           selectedFrequency = CString.daily;
-        } else if (rrule.frequency.toString() == "YEARLY") {
-          selectedFrequency = CString.yearly;
-        } else if (rrule.frequency.toString() == "MONTHLY") {
-          selectedFrequency = CString.monthly;
         } else if (rrule.frequency.toString() == "WEEKLY") {
           selectedFrequency = CString.weekly;
-        } else if (rrule.frequency.toString() == "HOURLY") {
-          selectedFrequency = CString.hourly;
         }
       }
       if (rrule.interval != null) {
@@ -173,8 +167,6 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
 
   Widget _buildEndMeta() {
     switch (selectedEnd) {
-      case CString.after:
-        return _buildEndAfter();
       case CString.onDate:
         return _buildEndOnDate();
     }
@@ -186,7 +178,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       vPadding: 20,
       child: Row(
         children: [
-          buildColumn("End", endDropDown()),
+          buildColumn("Until", endDropDown()),
           const SizedBox(width: 10),
           _buildEndMeta(),
         ],
@@ -199,7 +191,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       children: [
         cContainer(
           child: Row(
-            children: [buildColumn("Every", _buildEveryTextField(CString.hours))],
+            children: [buildColumn("Interval", _buildEveryTextField(CString.hours))],
           ),
         ),
       ],
@@ -211,7 +203,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       children: [
         cContainer(
           child: Row(
-            children: [buildColumn("Every", _buildEveryTextField(CString.days))],
+            children: [buildColumn("Interval", _buildEveryTextField(CString.days))],
           ),
         ),
       ],
@@ -264,7 +256,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       children: [
         cContainer(
           child: Row(
-            children: [buildColumn("Every", _buildEveryTextField(CString.week))],
+            children: [buildColumn("Interval", _buildEveryTextField(CString.week))],
           ),
         ),
         const SizedBox(
@@ -312,7 +304,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       children: [
         cContainer(
           child: Row(
-            children: [buildColumn("Every", _buildEveryTextField(CString.month))],
+            children: [buildColumn("Interval", _buildEveryTextField(CString.month))],
           ),
         ),
         const SizedBox(height: 20),
@@ -371,16 +363,10 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
 
   Widget _buildMeta() {
     switch (selectedFrequency) {
-      case CString.yearly:
-        return _buildYearlyMeta();
-      case CString.monthly:
-        return _buildMonthlyMeta();
       case CString.weekly:
         return _buildWeeklyMeta();
       case CString.daily:
         return _buildDailyMeta();
-      case CString.hourly:
-        return _buildHourlyMeta();
     }
 
     return Container();
@@ -392,7 +378,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
         children: [
           buildColumn(CString.start, _startDateTextField()),
           const SizedBox(width: 10),
-          buildColumn(CString.repeat, _buildFrequencyDropdown()),
+          buildColumn(CString.Frequency, _buildFrequencyDropdown()),
         ],
       ),
     );
@@ -690,7 +676,7 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
 
   // for generate rrule
   _getRRule() {
-    Frequency _frequency = Frequency.yearly;
+    Frequency _frequency = Frequency.weekly;
     Set<ByWeekDayEntry> byWeekDays = {};
     Set<int> bySetPositions = {};
     Set<int> byMonthDays = {};
@@ -702,38 +688,6 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
 
     try {
       switch (selectedFrequency) {
-        case CString.yearly:
-          _frequency = Frequency.yearly;
-          switch (selectedMeta) {
-            case RecurrenceMeta.on:
-              byMonths.add(getMonthNumber());
-              byMonthDays.add(int.parse(selectedDay));
-              break;
-            case RecurrenceMeta.onThe:
-              bySetPositions.add(getSetPosition());
-              byWeekDays.addAll(getWeekDay());
-              byMonths.add(getMonthNumber());
-              break;
-            case RecurrenceMeta.onDay:
-              break;
-          }
-          break;
-        case CString.monthly:
-          _frequency = Frequency.monthly;
-          interval = (everyText == null ? null : int.parse(everyText!));
-          switch (selectedMeta) {
-            case RecurrenceMeta.on:
-              break;
-            case RecurrenceMeta.onThe:
-              bySetPositions.add(getSetPosition());
-              byWeekDays.addAll(getWeekDay());
-              break;
-            case RecurrenceMeta.onDay:
-              byMonthDays.add(int.parse(selectedDay));
-              break;
-          }
-          break;
-
         case CString.weekly:
           _frequency = Frequency.weekly;
           interval = (everyText == null ? null : int.parse(everyText!));
@@ -745,12 +699,6 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
 
         case CString.daily:
           _frequency = Frequency.daily;
-          interval = (everyText == null ? null : int.parse(everyText!));
-
-          break;
-
-        case CString.hourly:
-          _frequency = Frequency.hourly;
           interval = (everyText == null ? null : int.parse(everyText!));
 
           break;
