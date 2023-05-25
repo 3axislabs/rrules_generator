@@ -105,13 +105,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: const Text("Edit R Rule"),
               ),
             ),
+            // RRuleGenerator(
+            //   key: globalKey,
+            //   rrule: stringToRrule,
+            //   onChanged: (String? val) {
+            //     if (val != null) {
+            //       setState(() {
+            //         // rrule = val;
+            //       });
+            //     }
+            //   },
+            // ),
+
             RRuleGenerator(
               key: globalKey,
               rrule: stringToRrule,
+              updateUntil: true,
               onChanged: (String? val) {
                 if (val != null) {
                   setState(() {
-                    // rrule = val;
+                    log("vale $val");
                   });
                 }
               },

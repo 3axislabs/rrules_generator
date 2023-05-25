@@ -29,6 +29,8 @@ class RRuleGenerator extends StatefulWidget {
 
   final Function(String?) onChanged;
 
+  bool updateUntil;
+
   RRuleGenerator({
     required this.onChanged,
     this.rrule,
@@ -36,6 +38,7 @@ class RRuleGenerator extends StatefulWidget {
     this.textStyle = const TextStyle(color: Color(0xFF969696), fontSize: 16),
     this.titleStyle = const TextStyle(color: Colors.black, fontSize: 16),
     this.padding = const EdgeInsets.all(20),
+    this.updateUntil = false,
     Key? key,
   }) : super(key: key);
 
@@ -112,26 +115,38 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topCenter,
-      color: const Color(0xFFf8f8f8),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            _buildStartSection(),
-            const SizedBox(height: 20),
-            _buildMeta(),
-            const SizedBox(height: 30),
-            _buildEndSection()
-          ],
-        ),
-      ),
-    );
+    return widget.updateUntil
+        ? Container(
+            alignment: Alignment.topCenter,
+            color: const Color(0xFFf8f8f8),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildEndSection()
+                ],
+              ),
+            ),
+          )
+        : Container(
+            alignment: Alignment.topCenter,
+            color: const Color(0xFFf8f8f8),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  _buildStartSection(),
+                  const SizedBox(height: 20),
+                  _buildMeta(),
+                  const SizedBox(height: 30),
+                  _buildEndSection()
+                ],
+              ),
+            ),
+          );
   }
 
   Widget _buildEndOnDate() {
-    return buildColumn(CString.onDate, _endDateTextField());
+    return buildColumn('Until', _endDateTextField());
   }
 
   Widget _endAfterTextField() {
@@ -178,8 +193,6 @@ class RRuleGeneratorState extends State<RRuleGenerator> {
       vPadding: 20,
       child: Row(
         children: [
-          buildColumn("Until", endDropDown()),
-          const SizedBox(width: 10),
           _buildEndMeta(),
         ],
       ),
